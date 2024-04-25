@@ -26,15 +26,7 @@ void histlog(char *name, char *action) {
     time(&curr_time);
     timeinfo = localtime(&curr_time);
 
-    if (strstr(action, "restore") != NULL) {
-        sprintf(result, "[dim][%d:%d:%d] - %s - Succesfully restored from backup.", timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, name);
-    } else if (strstr(action, "backup") != NULL) {
-        sprintf(result, "[dim][%d:%d:%d] - %s - Succesfully moved to backup.", timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, name);
-
-    } else if (strstr(action, "delete") != NULL) {
-        sprintf(result, "[dim][%d:%d:%d] - %s - Succesfully Deleted.", timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, name);
-
-    } else if (strstr(action, "rename") != NULL) {
+    if (strstr(action, "rename") != NULL) {
         sprintf(result, "[dim][%d:%d:%d] - %s - Succesfully Renamed.", timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, name);
     }
 
@@ -78,7 +70,6 @@ int rename_stuff() {
                         histlog(text, "delete");
                     } else if (strstr(text, "r3N4mE") != NULL) {
                         strcat(to_change, dp->d_name);
-
                         if (strstr(text, ".ts") != NULL) {
                             rename(to_change, "/home/dim/uni/sisop/Sisop-2-2024-MH-IT24/soal_2/library/helper.ts");
                             histlog("helper.ts", "rename");
