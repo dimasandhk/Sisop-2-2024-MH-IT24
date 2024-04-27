@@ -617,4 +617,14 @@ void killApps() {
     }
 }
 ```
+## Preview program
+Untuk opsi `-o`:
+<img src="./img/p42.png" />
+Untuk opsi `-f`:
+<img src="./img/p43.png" />
+Untuk opsi `-k` default dengan `-k` berdasarkan file.conf:
+<img src="./img/p44.png" />
+<hr>
+<img src="./img/p45.png" />
+
 
