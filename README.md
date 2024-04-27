@@ -437,6 +437,10 @@ int rename_stuff() {
 
 dan terakhir terdapat fungsi utility tambahan yaitu `file_exist` dan `histlog`, di mana `file_exist` digunakan untuk mengecek apakah file ada pada direktori, sedangkan `histlog` digunakan untuk seluruh operasi log program
 
+## Kesulitan
+
+Tidak selesai pengerjaan mode lainnya
+
 ## Preview program
 
 berikut preview terminal ketika dijalankan
@@ -762,6 +766,10 @@ void killApps() {
     }
 }
 ```
+
+## Kesulitan
+
+Program yang dijalankan dengan program terbatas dan banyak masalah terutama firefox
 
 ## Preview program
 
