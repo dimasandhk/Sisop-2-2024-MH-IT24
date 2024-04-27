@@ -73,16 +73,13 @@ int rename_stuff() {
                         if (strstr(text, ".ts") != NULL) {
                             rename(to_change, "/home/dim/uni/sisop/Sisop-2-2024-MH-IT24/soal_2/library/helper.ts");
                             histlog("helper.ts", "rename");
-                        }
-                        else if (strstr(text, ".py") != NULL) {
+                        } else if (strstr(text, ".py") != NULL) {
                             rename(to_change, "/home/dim/uni/sisop/Sisop-2-2024-MH-IT24/soal_2/library/calculator.py");
                             histlog("calculator.py", "rename");
-                        }
-                        else if (strstr(text, ".go") != NULL) {
+                        } else if (strstr(text, ".go") != NULL) {
                             rename(to_change, "/home/dim/uni/sisop/Sisop-2-2024-MH-IT24/soal_2/library/server.go");
                             histlog("server.go", "rename");
-                        }
-                        else {
+                        } else {
                             rename(to_change, "/home/dim/uni/sisop/Sisop-2-2024-MH-IT24/soal_2/library/renamed.file");
                             histlog("renamed.file", "rename");
                         }
@@ -109,16 +106,13 @@ int rename_stuff() {
                         if (strstr(text, ".ts") != NULL) {
                             rename(to_change, "/home/dim/uni/sisop/Sisop-2-2024-MH-IT24/soal_2/library/helper.ts");
                             histlog("helper.ts", "rename");
-                        }
-                        else if (strstr(text, ".py") != NULL) {
+                        } else if (strstr(text, ".py") != NULL) {
                             rename(to_change, "/home/dim/uni/sisop/Sisop-2-2024-MH-IT24/soal_2/library/calculator.py");
                             histlog("calculator.py", "rename");
-                        }
-                        else if (strstr(text, ".go") != NULL) {
+                        } else if (strstr(text, ".go") != NULL) {
                             rename(to_change, "/home/dim/uni/sisop/Sisop-2-2024-MH-IT24/soal_2/library/server.go");
                             histlog("server.go", "rename");
-                        }
-                        else {
+                        } else {
                             rename(to_change, "/home/dim/uni/sisop/Sisop-2-2024-MH-IT24/soal_2/library/renamed.file");
                             histlog("renamed.file", "rename");
                         }
