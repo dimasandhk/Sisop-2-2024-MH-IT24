@@ -24,7 +24,7 @@ Program akan berjalan setelah mengcompile source code lalu memasukkan file execu
 
 > **Perlu diperhatikan bahwa path menuju folder perlu diakhiri dengan `/` agar bisa bekerja dikarenakan salah satu bagian dari design source code yang mendapatkan path menuju file text dengan mengabungkan path menuju folder dengan nama dari file text.**
 
-# Files
+## Files
 
 Beberapa nama berikut adalah bagian-bagian yang diperlukan untuk menjalakan program beserta deskripsi detailnya.
 
@@ -40,7 +40,7 @@ File text hanya berisikan string yang akan menjadi input utama dari **virus**. F
 
 Path menuju folder ini menjadi input utama kedua yang diperlukan untuk mendapatkan file-file text di dalamnya. Input hanya dapat dimasukkan dengan cara direct, seperti `/path/to/folder/` dan `./path-to-folder/`. Ingat untuk memasukkan `/` pada akhir path dikarenakan oleh alasan yang telah dijelaskan pada pembukaan.
 
-# Source Code
+## Source Code
 
 Terdapat beberapa function buatan yang penting dalam menjalankan fungsi utama dari program ini. Function tersebut dapat dilihat di bawah ini dengan judul berupa nama atau fungsi yang dijalankannya.
 
@@ -220,7 +220,9 @@ A match would print replacement string and skip writing from `tmp[]` array by ho
 Reports the findings in separate text file on single log file. Much of the past bugs is written as comments if you are interested in reading it.
 
 # Soal 2 - management.c
+
 Pertama2 mulai dari fungsi mainnya, program pertama membuat daemon dengan while terus menerus, print pidnya, kemudian menjalankan mode default dari program no 2
+
 ```c
 int main(int argc, char *argv[]) {
     signal(SIGRTMIN, signal_handler);
@@ -261,6 +263,7 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 ```
+
 di mode default sendiri pertama kita download dan extract library.zip setelah itu kita lakukan rename decrypt (ROT19) seluruh nama file yang ada di library. Jika pada nama file nya terdapat kata `r3N4mE` maka rename file berdasarkan extension, jika terdapat `d3Let3` maka hapus filenya, dan tersisa file yang sudah ter-rename dan file yang nama filenya mengandung kata `m0V3`
 
 ```c
@@ -268,15 +271,15 @@ int default_act() {
     int status;
     if (file_exist("library.zip") == 0) {
         pid_t download_child = fork();
-        
+
         if (download_child == 0) {
             backup_mode = 0;
             char *argv[6] = {"Download", "--content-disposition", "https://docs.google.com/uc?export=download&id=1rUIZmp10lXLtCIH3LAZJzRPeRks3Crup", "-P", "/home/dim/uni/sisop/Sisop-2-2024-MH-IT24/soal_2", NULL};
             execv("/bin/wget", argv);
         }
-        
-    } 
-    
+
+    }
+
     wait(&status);
     if (WIFEXITED(status)) {
         if (file_exist("history.log") == 0) {
@@ -285,7 +288,7 @@ int default_act() {
                 char *argv[3] = {"make a history", "/home/dim/uni/sisop/Sisop-2-2024-MH-IT24/soal_2/history.log", NULL};
                 execv("/bin/touch", argv);
             }
-        
+
         }
     }
 
@@ -346,6 +349,7 @@ int default_act() {
     sleep(2024);
 }
 ```
+
 sebenarnya kebanyakan proses berada pada function `rename_stuff()` yang berisi logic dari decrypt ROT19 nya, dan seluruh operasi seperti rename dan delete.
 
 ```c
@@ -422,7 +426,7 @@ int rename_stuff() {
                         rename(original_name, to_change);
                         histlog(dp->d_name, "rename");
                     }
-                }  
+                }
             }
         }
         sleep(1);
@@ -430,18 +434,151 @@ int rename_stuff() {
     closedir(dir);
 }
 ```
+
 dan terakhir terdapat fungsi utility tambahan yaitu `file_exist` dan `histlog`, di mana `file_exist` digunakan untuk mengecek apakah file ada pada direktori, sedangkan `histlog` digunakan untuk seluruh operasi log program
 
 ## Preview program
+
 berikut preview terminal ketika dijalankan
 <img src="./img/p21.png" />
 dan struktur direktori nomor 2 akan menjadi seperti:
 <img src="./img/p22.png" />
 
+# Soal 3 - admin.c
 
+1. Pembuatan Log
+   #include <stdio.h>
+   #include <stdlib.h>
+   #include <unistd.h>
+   #include <string.h>
+   #include <time.h>
+   #include <stdbool.h>
+
+#define LOG_FILE_EXTENSION ".log"
+
+void write_log(const char *user, const char *activity, bool success) {
+time_t current_time;
+struct tm *time_info;
+char time_str[20];
+char log_filename[50];
+FILE *log_file;
+
+    time(&current_time);
+    time_info = localtime(&current_time);
+    strftime(time_str, sizeof(time_str), "%d-%m-%Y_%H-%M-%S", time_info);
+
+    snprintf(log_filename, sizeof(log_filename), "%s%s", user, LOG_FILE_EXTENSION);
+
+    log_file = fopen(log_filename, "a");
+    if (log_file == NULL) {
+        perror("Error opening log file");
+        exit(EXIT_FAILURE);
+    }
+
+    if (success) {
+        fprintf(log_file, "[%s]-pid_kegiatan-%s_RUNNING\n", time_str, activity);
+    } else {
+        fprintf(log_file, "[%s]-pid_kegiatan-%s_FAILED\n", time_str, activity);
+    }
+
+    fclose(log_file);
+
+}
+Penjelasan:
+ Kode pada bagian ini memuat definisi fungsi write_log yang bertanggung jawab untuk menulis log ke file.
+ Fungsi ini menggunakan library <stdio.h> untuk operasi input/output, <stdlib.h> untuk alokasi memori dinamis, <unistd.h> untuk fungsi sleep, <string.h> untuk fungsi-fungsi pemrosesan string, <time.h> untuk pengolahan waktu, dan <stdbool.h> untuk tipe data boolean.
+ LOG_FILE_EXTENSION didefinisikan sebagai ekstensi file log yang akan digunakan.
+ Fungsi write_log menerima tiga parameter: user (nama pengguna), activity (nama aktivitas), dan success (status keberhasilan aktivitas).
+ Fungsi ini menghasilkan timestamp, membentuk nama file log, membuka file log, menuliskan aktivitas, dan menutup file log setelah selesai.
+
+2.  Pemantauan Aktivitas Pengguna
+    void monitor_user_activity(const char \*user) {
+    char activity[100];
+
+        while (1) {
+            strcpy(activity, "Sample activity");
+
+            write_log(user, activity, true);
+
+            sleep(1);
+        }
+
+    }
+    Penejelasan:
+     Bagian ini berisi definisi fungsi monitor_user_activity.
+     Fungsi ini bertanggung jawab untuk terus menerus menuliskan log aktivitas pengguna dengan interval satu detik.
+     Aktivitas yang dicatat dalam fungsi ini hanya sebagai contoh ("Sample activity").
+
+3.  Pengendalian Aktivitas Pengguna
+    void stop_monitoring_user(const char \*user) {
+    printf("Stop monitoring user: %s\n", user);
+    }
+
+void cancel_user_activities(const char \*user) {
+printf("Canceling activities for user: %s\n", user);
+write_log(user, "User is currently active", false);
+}
+
+void allow_user_activities(const char \*user) {
+printf("Allowing activities for user: %s\n", user);
+write_log(user, "User is currently active", true);
+}
+Penjelasan:
+ Bagian ini berisi definisi fungsi-fungsi pengendali: stop_monitoring_user, cancel_user_activities, dan allow_user_activities.
+ Setiap fungsi pengendali mencetak pesan yang sesuai dengan tindakan yang diambil dan juga memanggil fungsi write_log untuk mencatat aktivitas pengguna yang relevan.
+
+4.  Fungsi Utama (main)
+    int main(int argc, char \*argv[]) {
+    if (argc < 3) {
+    printf("Usage: %s <command> <user>\n", argv[0]);
+    printf("Commands:\n");
+    printf(" -m : Monitor user activity\n");
+    printf(" -s : Stop monitoring user activity\n");
+    printf(" -c : Cancel user activities\n");
+    printf(" -a : Allow user activities\n");
+    return EXIT_FAILURE;
+    }
+
+        char *command = argv[1];
+        char *user = argv[2];
+
+        if (strcmp(command, "-m") == 0) {
+            printf("Monitoring user: %s\n", user);
+            monitor_user_activity(user);
+        } else if (strcmp(command, "-s") == 0) {
+            stop_monitoring_user(user);
+        } else if (strcmp(command, "-c") == 0) {
+            cancel_user_activities(user);
+        } else if (strcmp(command, "-a") == 0) {
+            allow_user_activities(user);
+        } else {
+            printf("Unknown command: %s\n", command);
+            return EXIT_FAILURE;
+        }
+
+        return EXIT_SUCCESS;
+
+    }
+
+penjelasan singkat:
+
+1. _Header Files_: Program ini menggunakan beberapa header file untuk fungsi-fungsi standar dan waktu.
+
+2. **Fungsi write_log**: Fungsi ini digunakan untuk menulis ke file log. Itu mengambil tiga parameter: user (nama pengguna), activity (aktivitas yang dilakukan), dan success (apakah aktivitas berhasil). Fungsi ini menuliskan timestamp, nama pengguna, status aktivitas, dan aktivitas yang dilakukan ke file log.
+
+3. _Fungsi-fungsi lainnya_:
+
+   - monitor_user_activity: Fungsi ini secara berulang mencatat aktivitas pengguna ke dalam file log setiap detik.
+   - stop_monitoring_user: Fungsi ini hanya mencetak pesan bahwa pemantauan pengguna telah dihentikan.
+   - cancel_user_activities: Fungsi ini membatalkan aktivitas pengguna dengan mencatat ke file log bahwa aktivitas dibatalkan.
+   - allow_user_activities: Fungsi ini mengizinkan kembali aktivitas pengguna dan mencatat ke file log bahwa aktivitas diizinkan.
+
+4. **Fungsi main**: Fungsi utama program. Ini membaca argumen baris perintah dan memanggil fungsi yang sesuai berdasarkan perintah yang diberikan. Jika perintah tidak dikenali, program mencetak pesan kesalahan.
 
 # Soal 4 - setup.c
+
 Pertama2 mulai dari fungsi mainnya, program memiliki alur bekerja seperti berikut:
+
 ```c
 	loadRunningApps();
 
@@ -490,12 +627,15 @@ Pertama2 mulai dari fungsi mainnya, program memiliki alur bekerja seperti beriku
 ```
 
 pada kode tersebut ada handler untuk argument:
--  `-o` yang digunakan untuk open program berdasarkan parameter yang diketikan setelahnya, contoh `./setup -o spotify 1 firefox 2`
+
+- `-o` yang digunakan untuk open program berdasarkan parameter yang diketikan setelahnya, contoh `./setup -o spotify 1 firefox 2`
 - `-f` yang digunakan untuk open program berdasarkan file config yang kita ketikkan setelahnya, contoh `./setup -f file.conf`
 - `-k` yang digunakan untuk mengekill semua program yang dijalankan menggunakan `./setup`, ada juga untuk kill sesuai file conf dengan cara `./setup -k file.conf`
 
 ## Proses Buka App
+
 Pertama2 buka file untuk mendapatkan pid yang sudah ada / dijalankan sebelumnya
+
 ```c
 void loadRunningApps() {
     FILE *file = fopen(FILENAME, "r");
@@ -508,7 +648,9 @@ void loadRunningApps() {
     }
 }
 ```
+
 Lalu setelah itu untuk proses buka app ada fungsi untuk menambahkan pid ke file txtnya, dan menambahkan banyak program di file txtnya
+
 ```c
 void addRunningApp(pid_t pid) {
     if (num_running_apps < MAX_APPS) {
@@ -558,7 +700,7 @@ void readConfigFile(char *filename) {
     int num;
 
     while (fgets(line, sizeof(line), file)) {
-        
+
         app = strtok(line, " ");
         num = atoi(strtok(NULL, " \n"));
 
@@ -576,8 +718,11 @@ void readConfigFile(char *filename) {
     fclose(file);
 }
 ```
+
 ## Proses Kill App
+
 Pada proses kill app saya gunakan pkill ketika ingin kill berdasarkan file.conf, jika tidak saya kill berdasarkan file txt
+
 ```c
 void kill_app(char *app) {
     if (fork() == 0) {
@@ -617,14 +762,15 @@ void killApps() {
     }
 }
 ```
+
 ## Preview program
+
 Untuk opsi `-o`:
 <img src="./img/p42.png" />
 Untuk opsi `-f`:
 <img src="./img/p43.png" />
 Untuk opsi `-k` default dengan `-k` berdasarkan file.conf:
 <img src="./img/p44.png" />
+
 <hr>
 <img src="./img/p45.png" />
-
-
